@@ -1,16 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import StarRating from './StarRating'
-// import './index.css'
+// import StarRating from './StarRating'
+import './index.css'
 // import App from './App'
+import App from './App-v1'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
-    <StarRating
+    <App />
+    {/* <StarRating
       messages={['not bad', 'well', 'good', 'excellent', 'perfect']}
     />
-    <StarRating maxRating={10} />
+    <StarRating maxRating={10} /> */}
   </React.StrictMode>
 )
