@@ -68,6 +68,7 @@ export default function App() {
         return
       }
 
+      handleCloseDetail()
       fetchMovie()
 
       return function () {
@@ -237,6 +238,22 @@ function MovieDetail({ id, onCloseMovie, onAddWatchedList, watched }) {
       return () => (document.title = 'usePopcorn')
     },
     [movie.Title]
+  )
+
+  useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === 'Escape') {
+          onCloseMovie()
+        }
+      }
+      document.addEventListener('keyup', callback)
+
+      return function () {
+        document.removeEventListener('keyup', callback)
+      }
+    },
+    [onCloseMovie]
   )
 
   return (
