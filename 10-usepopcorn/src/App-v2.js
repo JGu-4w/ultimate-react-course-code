@@ -241,6 +241,15 @@ function MovieDetail({ id, onCloseMovie, onAddWatchedList, watched }) {
   const [isLoading, setIsLoading] = useState(false)
   const isWatched = watched.find((movie) => movie.imdbID === id)
 
+  const countRef = useRef(0)
+
+  useEffect(
+    function () {
+      if (userRating) countRef.current = countRef.current + 1
+    },
+    [userRating]
+  )
+
   useEffect(
     function () {
       async function getMovieDetail() {
@@ -327,7 +336,11 @@ function MovieDetail({ id, onCloseMovie, onAddWatchedList, watched }) {
                     <button
                       className="btn-add"
                       onClick={() =>
-                        onAddWatchedList({ ...movie, userRating: userRating })
+                        onAddWatchedList({
+                          ...movie,
+                          userRating: userRating,
+                          rateCount: countRef.current,
+                        })
                       }
                     >
                       + Add to Watched List
