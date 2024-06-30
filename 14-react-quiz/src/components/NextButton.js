@@ -1,11 +1,12 @@
-export default function NextButton({ answer, dispatch }) {
+export default function NextButton({ index, count, answer, dispatch }) {
   if (answer === null) return null
+  const finish = !(index < count - 1)
   return (
     <button
       className="btn btn-ui"
-      onClick={() => dispatch({ type: 'nextQuestion' })}
+      onClick={() => dispatch({ type: finish ? 'finish' : 'nextQuestion' })}
     >
-      Next
+      {finish ? 'Finish' : 'Next'}
     </button>
   )
 }
