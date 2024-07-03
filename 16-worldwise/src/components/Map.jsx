@@ -8,10 +8,10 @@ export default function Map() {
   const lat = searchParams.get('lat')
   const lng = searchParams.get('lng')
 
-  const nagivate = useNavigate()
+  const navigate = useNavigate()
 
   return (
-    <div className={styles.mapContainer} onClick={() => nagivate('form')}>
+    <div className={styles.mapContainer} onClick={() => navigate('form')}>
       <h2>id: {id}</h2>
       <h2>
         lat: {lat} lng: {lng}

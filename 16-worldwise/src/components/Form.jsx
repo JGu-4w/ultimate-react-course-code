@@ -20,7 +20,7 @@ function Form() {
   const [date, setDate] = useState(new Date())
   const [notes, setNotes] = useState('')
 
-  const nagivate = useNavigate()
+  const navigate = useNavigate()
 
   return (
     <form className={styles.form}>
@@ -58,7 +58,7 @@ function Form() {
           type="back"
           onClick={(e) => {
             e.preventDefault()
-            nagivate(-1)
+            navigate(-1)
           }}
         >
           &larr; Back

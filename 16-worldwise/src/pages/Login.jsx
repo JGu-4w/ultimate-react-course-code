@@ -10,7 +10,7 @@ export default function Login() {
   const [email, setEmail] = useState('jack@example.com')
   const [password, setPassword] = useState('qwerty')
 
-  const nagivate = useNavigate()
+  const navigate = useNavigate()
 
   return (
     <main className={styles.login}>
@@ -37,7 +37,7 @@ export default function Login() {
         </div>
 
         <div>
-          <Button type="primary" onClick={() => nagivate('/app')}>
+          <Button type="primary" onClick={() => navigate('/app')}>
             Login
           </Button>
         </div>
