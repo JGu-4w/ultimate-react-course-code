@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
-import { faker } from "@faker-js/faker";
+import { createContext, useContext, useEffect, useState } from 'react'
+import { faker } from '@faker-js/faker'
+
+const PostContext = createContext()
 
 function createRandomPost() {
   return {
     title: `${faker.hacker.adjective()} ${faker.hacker.noun()}`,
     body: faker.hacker.phrase(),
-  };
+  }
 }
 
 function App() {
   const [posts, setPosts] = useState(() =>
     Array.from({ length: 30 }, () => createRandomPost())
-  );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isFakeDark, setIsFakeDark] = useState(false);
+  )
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isFakeDark, setIsFakeDark] = useState(false)
 
   // Derived state. These are the posts that will actually be displayed
   const searchedPosts =
@@ -23,106 +25,118 @@ function App() {
             .toLowerCase()
             .includes(searchQuery.toLowerCase())
         )
-      : posts;
+      : posts
 
   function handleAddPost(post) {
-    setPosts((posts) => [post, ...posts]);
+    setPosts((posts) => [post, ...posts])
   }
 
   function handleClearPosts() {
-    setPosts([]);
+    setPosts([])
   }
 
   // Whenever `isFakeDark` changes, we toggle the `fake-dark-mode` class on the HTML element (see in "Elements" dev tool).
   useEffect(
     function () {
-      document.documentElement.classList.toggle("fake-dark-mode");
+      document.documentElement.classList.toggle('fake-dark-mode')
     },
     [isFakeDark]
-  );
+  )
 
   return (
-    <section>
-      <button
-        onClick={() => setIsFakeDark((isFakeDark) => !isFakeDark)}
-        className="btn-fake-dark-mode"
-      >
-        {isFakeDark ? "☀️" : "🌙"}
-      </button>
+    <PostContext.Provider
+      value={{
+        posts: searchedPosts,
+        onAddPost: handleAddPost,
+        onClearPosts: handleClearPosts,
+        searchQuery,
+        setSearchQuery,
+      }}
+    >
+      <section>
+        <button
+          onClick={() => setIsFakeDark((isFakeDark) => !isFakeDark)}
+          className="btn-fake-dark-mode"
+        >
+          {isFakeDark ? '☀️' : '🌙'}
+        </button>
 
-      <Header
-        posts={searchedPosts}
-        onClearPosts={handleClearPosts}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
-      <Main posts={searchedPosts} onAddPost={handleAddPost} />
-      <Archive onAddPost={handleAddPost} />
-      <Footer />
-    </section>
-  );
+        <Header
+          posts={searchedPosts}
+          onClearPosts={handleClearPosts}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+        <Main posts={searchedPosts} onAddPost={handleAddPost} />
+        <Archive onAddPost={handleAddPost} />
+        <Footer />
+      </section>
+    </PostContext.Provider>
+  )
 }
 
-function Header({ posts, onClearPosts, searchQuery, setSearchQuery }) {
+function Header() {
+  const { onClearPosts } = useContext(PostContext)
   return (
     <header>
       <h1>
         <span>⚛️</span>The Atomic Blog
       </h1>
       <div>
-        <Results posts={posts} />
-        <SearchPosts
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
+        <Results />
+        <SearchPosts />
         <button onClick={onClearPosts}>Clear posts</button>
       </div>
     </header>
-  );
+  )
 }
 
-function SearchPosts({ searchQuery, setSearchQuery }) {
+function SearchPosts() {
+  const { searchQuery, setSearchQuery } = useContext(PostContext)
   return (
     <input
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
       placeholder="Search posts..."
     />
-  );
+  )
 }
 
-function Results({ posts }) {
-  return <p>🚀 {posts.length} atomic posts found</p>;
+function Results() {
+  const { posts } = useContext(PostContext)
+  return <p>🚀 {posts.length} atomic posts found</p>
 }
 
 function Main({ posts, onAddPost }) {
   return (
     <main>
-      <FormAddPost onAddPost={onAddPost} />
-      <Posts posts={posts} />
+      <FormAddPost />
+      <Posts />
     </main>
-  );
+  )
 }
 
-function Posts({ posts }) {
+function Posts() {
   return (
     <section>
-      <List posts={posts} />
+      <List />
     </section>
-  );
+  )
 }
 
-function FormAddPost({ onAddPost }) {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+function FormAddPost() {
+  const { onAddPost } = useContext(PostContext)
+
+  const [title, setTitle] = useState('')
+  const [body, setBody] = useState('')
 
   const handleSubmit = function (e) {
-    e.preventDefault();
-    if (!body || !title) return;
-    onAddPost({ title, body });
-    setTitle("");
-    setBody("");
-  };
+    e.preventDefault()
+    if (!body || !title) return
+    onAddPost({ title, body })
+    setTitle('')
+    setBody('')
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -138,10 +152,11 @@ function FormAddPost({ onAddPost }) {
       />
       <button>Add post</button>
     </form>
-  );
+  )
 }
 
-function List({ posts }) {
+function List() {
+  const { posts } = useContext(PostContext)
   return (
     <ul>
       {posts.map((post, i) => (
@@ -151,7 +166,7 @@ function List({ posts }) {
         </li>
       ))}
     </ul>
-  );
+  )
 }
 
 function Archive({ onAddPost }) {
@@ -159,15 +174,15 @@ function Archive({ onAddPost }) {
   const [posts] = useState(() =>
     // 💥 WARNING: This might make your computer slow! Try a smaller `length` first
     Array.from({ length: 10000 }, () => createRandomPost())
-  );
+  )
 
-  const [showArchive, setShowArchive] = useState(false);
+  const [showArchive, setShowArchive] = useState(false)
 
   return (
     <aside>
       <h2>Post archive</h2>
       <button onClick={() => setShowArchive((s) => !s)}>
-        {showArchive ? "Hide archive posts" : "Show archive posts"}
+        {showArchive ? 'Hide archive posts' : 'Show archive posts'}
       </button>
 
       {showArchive && (
@@ -183,11 +198,11 @@ function Archive({ onAddPost }) {
         </ul>
       )}
     </aside>
-  );
+  )
 }
 
 function Footer() {
-  return <footer>&copy; by The Atomic Blog ✌️</footer>;
+  return <footer>&copy; by The Atomic Blog ✌️</footer>
 }
 
-export default App;
+export default App
