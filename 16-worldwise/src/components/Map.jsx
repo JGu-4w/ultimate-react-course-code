@@ -14,13 +14,11 @@ import { useGeolocation } from '../hooks/useGeolocation'
 import styles from './Map.module.css'
 import { useCities } from '../contexts/CitiesContext'
 import Button from './Button'
+import { useUrlPosition } from '../hooks/useUrlPosition'
 
 export default function Map() {
   const [mapPosition, setMapPosition] = useState([40, 0])
-
-  const [searchParams, setSearchParams] = useSearchParams()
-  const mapLat = searchParams.get('lat')
-  const mapLng = searchParams.get('lng')
+  const { lat: mapLat, lng: mapLng } = useUrlPosition()
 
   const { cities } = useCities()
 
