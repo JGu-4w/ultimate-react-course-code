@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 
 import Button from './Button'
 import BackButton from './BackButton'
@@ -34,17 +36,18 @@ function Form() {
 
   useEffect(() => {
     async function fetchCityData() {
+      if (!lat && !lng) return
       try {
         setIsGeocodingLoading(true)
         setGeocodingError('')
         const res = await fetch(`${BASE_URL}?latitude=${lat}&longitude=${lng}`)
         const data = await res.json()
-
-        console.log(data.countryCode)
+        console.log(data)
         if (!data.countryCode)
           throw new Error(
             "That doesn't seem to be a City. Please Click Somewhere Else."
           )
+
         setCityName(data.city)
         setCountry(data.countryName)
         setEmoji(convertToEmoji(data.countryCode))
@@ -59,6 +62,9 @@ function Form() {
 
   if (isGeocodingLoading) return <Spinner />
   if (geocodingError) return <Message message={geocodingError} />
+  if (!lat && !lng)
+    return <Message message="Please Click Somewhere to start record" />
+
   return (
     <form className={styles.form}>
       <div className={styles.row}>
@@ -73,10 +79,15 @@ function Form() {
 
       <div className={styles.row}>
         <label htmlFor="date">When did you go to {cityName}?</label>
-        <input
+        {/* <input
           id="date"
           onChange={(e) => setDate(e.target.value)}
           value={date}
+        /> */}
+        <DatePicker
+          onChange={(date) => setDate(date)}
+          selected={date}
+          dateFormat="dd/MM/yyyy"
         />
       </div>
 
