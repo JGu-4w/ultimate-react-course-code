@@ -20,7 +20,7 @@ export default function Homepage() {
           of. Never forget your wonderful experiences, and show your friends how
           you have wandered the world.
         </h2>
-        <Button type="primary" onClick={() => navigate('app')}>
+        <Button type="primary" onClick={() => navigate('/')}>
           START TRACKING NOW
         </Button>
       </section>
