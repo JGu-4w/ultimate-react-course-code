@@ -11,6 +11,7 @@ import Spinner from './Spinner'
 import Message from './Message'
 import styles from './Form.module.css'
 import { useUrlPosition } from '../hooks/useUrlPosition'
+import { useCities } from '../contexts/CitiesContext'
 
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
@@ -33,6 +34,7 @@ function Form() {
 
   const navigate = useNavigate()
   const { lat, lng } = useUrlPosition()
+  const { createCity, isLoading } = useCities()
 
   useEffect(() => {
     async function fetchCityData() {
@@ -60,13 +62,32 @@ function Form() {
     fetchCityData()
   }, [lat, lng])
 
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!cityName || !date) return
+
+    const newCity = {
+      cityName,
+      country,
+      emoji,
+      date,
+      notes,
+      position: { lat, lng },
+    }
+    await createCity(newCity)
+    navigate('/app/cities')
+  }
+
   if (isGeocodingLoading) return <Spinner />
   if (geocodingError) return <Message message={geocodingError} />
   if (!lat && !lng)
     return <Message message="Please Click Somewhere to start record" />
 
   return (
-    <form className={styles.form}>
+    <form
+      className={`${styles.form} ${isLoading ? styles.loading : ''}`}
+      onSubmit={handleSubmit}
+    >
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input
@@ -85,6 +106,7 @@ function Form() {
           value={date}
         /> */}
         <DatePicker
+          id="date"
           onChange={(date) => setDate(date)}
           selected={date}
           dateFormat="dd/MM/yyyy"
