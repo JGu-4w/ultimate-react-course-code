@@ -1,5 +1,3 @@
-import { useEffect, useReducer } from 'react'
-
 import Header from './Header'
 import Main from './Main'
 import Loader from './Loader'
@@ -10,96 +8,14 @@ import NextButton from './NextButton'
 import Progress from './Progress'
 import FinishScreen from './FinishScreen'
 import Timer from './Timer'
-
-const initialState = {
-  questions: [],
-  // 'loaidng', 'error', 'ready', 'active', 'finished'
-  status: 'loading',
-  index: 0,
-  answer: null,
-  points: 0,
-  highscore: 0,
-  remainingSecond: 0,
-}
-
-const SECOND_PER_QUESTION = 30
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'dataReceived':
-      return {
-        ...state,
-        questions: action.payload,
-        status: 'ready',
-      }
-    case 'dataFailed':
-      return {
-        ...state,
-        status: 'error',
-      }
-    case 'start':
-      return {
-        ...state,
-        status: 'active',
-        remainingSecond: state.questions.length * SECOND_PER_QUESTION,
-      }
-    case 'setAnswer':
-      const question = state.questions.at(state.index)
-
-      return {
-        ...state,
-        answer: action.payload,
-        points:
-          action.payload === question.correctOption
-            ? state.points + question.points
-            : state.points,
-      }
-    case 'nextQuestion':
-      return {
-        ...state,
-        index: state.index + 1,
-        answer: null,
-      }
-    case 'finish':
-      return {
-        ...state,
-        status: 'finished',
-        highscore:
-          state.points > state.highscore ? state.points : state.highscore,
-      }
-    case 'restart':
-      return {
-        ...initialState,
-        status: 'ready',
-        questions: state.questions,
-      }
-    case 'tick':
-      return {
-        ...state,
-        remainingSecond: state.remainingSecond - 1,
-        status: state.remainingSecond === 0 ? 'finished' : state.status,
-      }
-
-    default:
-      break
-  }
-}
+import { useQuiz } from '../context/QuizeContext'
+import { useEffect } from 'react'
 
 export default function App() {
-  const [
-    { questions, status, index, answer, points, highscore, remainingSecond },
-    dispatch,
-  ] = useReducer(reducer, initialState)
-
-  const questionsCount = questions.length
-  const totalPoints = questions.reduce((acc, cur) => acc + cur.points, 0)
-
+  const { status } = useQuiz()
   useEffect(() => {
-    fetch('http://localhost:8000/questions')
-      .then((res) => res.json())
-      .then((res) => dispatch({ type: 'dataReceived', payload: res }))
-      .catch((error) => dispatch({ type: 'dataFailed' }))
-  }, [])
+    console.log(status)
+  }, [status])
 
   return (
     <div className="app">
@@ -108,40 +24,16 @@ export default function App() {
       <Main>
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
-        {status === 'ready' && (
-          <StartScreen count={questionsCount} dispatch={dispatch} />
-        )}
+        {status === 'ready' && <StartScreen />}
         {status === 'active' && (
           <>
-            <Progress
-              index={index}
-              answer={answer}
-              points={points}
-              count={questionsCount}
-              totalPoints={totalPoints}
-            />
-            <Question
-              question={questions[index]}
-              dispatch={dispatch}
-              answer={answer}
-            />
-            <Timer remainingSecond={remainingSecond} dispatch={dispatch} />
-            <NextButton
-              index={index}
-              count={questionsCount}
-              answer={answer}
-              dispatch={dispatch}
-            />
+            <Progress />
+            <Question />
+            <Timer />
+            <NextButton />
           </>
         )}
-        {status === 'finished' && (
-          <FinishScreen
-            points={points}
-            totalPoints={totalPoints}
-            highscore={highscore}
-            dispatch={dispatch}
-          />
-        )}
+        {status === 'finished' && <FinishScreen />}
       </Main>
     </div>
   )
