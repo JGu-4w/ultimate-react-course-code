@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import {
   createContext,
   useContext,
@@ -92,7 +93,7 @@ function CitiesProvider({ children }) {
     fetchCities()
   }, [])
 
-  async function getCity(id) {
+  const getCity = useCallback(async function getCity(id) {
     try {
       // setIsLoading(true)
       dispatch({ type: 'loading' })
@@ -106,7 +107,7 @@ function CitiesProvider({ children }) {
     } // finally {
     //  setIsLoading(false)
     //}
-  }
+  }, [])
 
   async function createCity(newCity) {
     try {
