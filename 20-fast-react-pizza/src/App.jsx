@@ -1,12 +1,12 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import AppLayout from './ui/AppLayout'
-import Home from './ui/Home'
-import Error from './ui/Error'
-import Menu, { loader as menuLoader } from './features/menu/Menu'
-import Cart from './features/cart/Cart'
-import CreateOrder from './features/order/CreateOrder'
-import Order from './features/order/Order'
+import AppLayout from "./ui/AppLayout";
+import Home from "./ui/Home";
+import Error from "./ui/Error";
+import Menu, { loader as menuLoader } from "./features/menu/Menu";
+import Cart from "./features/cart/Cart";
+import CreateOrder from "./features/order/CreateOrder";
+import Order, { loader as orderLoader } from "./features/order/Order";
 
 const router = createBrowserRouter([
   {
@@ -14,31 +14,33 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <Home />,
       },
       {
-        path: '/menu',
+        path: "/menu",
         element: <Menu />,
         loader: menuLoader,
         errorElement: <Error />,
       },
       {
-        path: '/cart',
+        path: "/cart",
         element: <Cart />,
       },
       {
-        path: '/order/new',
+        path: "/order/new",
         element: <CreateOrder />,
       },
       {
-        path: '/order/:orderId',
+        path: "/order/:orderId",
         element: <Order />,
+        loader: orderLoader,
+        errorElement: <Error />,
       },
     ],
   },
-])
+]);
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }
