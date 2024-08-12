@@ -34,7 +34,7 @@ const CabinTable = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['cabin'],
+    queryKey: ['cabins'],
     queryFn: getCabins,
   });
   if (isLoading) return <Spinner />;
