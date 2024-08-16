@@ -53,6 +53,7 @@ function CreateCabinForm() {
           id="maxCapacity"
           {...register('maxCapacity', {
             required: 'The field is required',
+            valueAsNumber: true,
             min: {
               value: 1,
               message: 'Capacity should be at least 1.',
@@ -67,6 +68,7 @@ function CreateCabinForm() {
           id="regularPrice"
           {...register('regularPrice', {
             required: 'The field is required',
+            valueAsNumber: true,
             min: { value: 1, message: 'price should be at least 1.' },
           })}
         />
@@ -79,6 +81,7 @@ function CreateCabinForm() {
           defaultValue={0}
           {...register('discount', {
             required: 'The field is required',
+            valueAsNumber: true,
             validate: (value) =>
               value < getValues().regularPrice ||
               'Discount should be less than price. ',
