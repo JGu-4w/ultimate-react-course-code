@@ -45,7 +45,7 @@ function MenuItem({ pizza }) {
           {!soldOut ? (
             <p className="text-sm">{formatCurrency(unitPrice)}</p>
           ) : (
-            <p className="text-sto500 text-sm font-medium uppercase">
+            <p className="text-stone-500 text-sm font-medium uppercase">
               Sold out
             </p>
           )}
